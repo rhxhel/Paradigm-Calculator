@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Arithmetic Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculator-card">
+        <h2>Smart Arithmetic Calculator</h2>
+        
+        <div class="paradigm-selector">
+            <label>Paradigm:</label>
+            <select id="paradigmChoice">
+                <option value="procedural">Procedural</option>
+                <option value="oop">Object-Oriented</option>
+                <option value="functional">Functional</option>
+                <option value="event">Event-Driven</option>
+            </select>
+        </div>
+
+        <div class="inputs">
+            <input type="number" id="num1" placeholder="Num 1">
+            <input type="number" id="num2" placeholder="Num 2">
+        </div>
+
+        <div class="operators">
+            <button type="button" onclick="handleAction('+')">+</button>
+            <button type="button" onclick="handleAction('-')">-</button>
+            <button type="button" onclick="handleAction('*')">×</button>
+            <button type="button" onclick="handleAction('/')">÷</button>
+            <button type="button" onclick="handleAction('%')">%</button>
+        </div>
+
+        <div class="utility-buttons">
+            <button type="button" onclick="clearCalculator()" class="btn-clear">AC</button>
+            <button type="button" onclick="copyResult()" class="btn-copy">Copy</button>
+        </div>
+
+        <div id="resultDisplay" class="result">Result: --</div>
+
+        <div class="history-section">
+            <h4>Recent Calculations</h4>
+            <ul id="historyList"></ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
