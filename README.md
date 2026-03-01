@@ -73,9 +73,8 @@ The calculator is implemented using three distinct programming approaches:
 Includes a built-in unit conversion tool:
 
 - Meters to Feet
-- Kilograms to Pounds
 - Celsius to Fahrenheit
-- And more
+- Kilograms to Pounds
 
 This allows easy comparison between different measurement systems.
 
