@@ -1,12 +1,12 @@
 let lastResult = null;
 let justCalculated = false;
 
-// --- Procedural Logic ---
+// --- Procedural Paradigm Logic ---
 function evaluateProcedural(expr) {
     return eval(expr);
 }
 
-// --- OOP Logic ---
+// --- OOP Paradigm Logic ---
 class SmartCalculator {
     constructor(expression) {
         this.expression = expression;
@@ -17,7 +17,7 @@ class SmartCalculator {
     }
 }
 
-// --- Functional Logic ---
+// --- Functional Logic Paradigm ---
 function evaluateFunctional(expr) {
     const compute = (expression) => eval(expression);
     return compute(expr);
@@ -130,6 +130,7 @@ inputField.addEventListener('input', function () {
 });
 
 // --- Keyboard Support for Calculator ---
+// --- Event-Driven Paradigm Logic ---
 document.addEventListener('keydown', (event) => {
     const key = event.key;
     const allowedOperators = ['+', '-', '*', '/', '%']; // add '%' here
