@@ -1,7 +1,7 @@
 /* --- Body & Layout --- */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: radial-gradient(circle, #1a1a1a 0%, #0d0d0d 100%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,19 +11,21 @@ body {
 
 .calculator-container {
     display: flex;
-    gap: 20px; /* space between calculator and history */
+    gap: 20px; 
 }
 
 /* --- Calculator Card --- */
 .calculator-card {
-    background: #ffffff;
+    background: #1e1e1e; 
+    color: #ffffff;
     padding: 2rem;
     border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     width: 350px;
     height: 550px;
     display: flex;
     flex-direction: column;
+    border: 1px solid #333;
 }
 
 .calculator-card h2{
@@ -32,14 +34,16 @@ body {
 
 /* --- History Card --- */
 .history-card {
-    background: #ffffff;
+    background: #1e1e1e;
+    color: #ffffff;
     padding: 2rem;
     border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     width: 250px;
     height: 550px;
     display: flex;
     flex-direction: column;
+    border: 1px solid #333;
 }
 
 .history-card h2 {
@@ -49,11 +53,13 @@ body {
 
 /* --- Input Field --- */
 input[type="text"] {
-    font-family: 'Roboto Mono', monospace; /* Input field font */
+    font-family: 'Roboto Mono', monospace; 
     font-size: 1rem;
     width: 325px;
     padding: 10px;
-    border: 2px solid #f1f2f6;
+    background-color: #2d2d2d;
+    color: #ff9500; 
+    border: 2px solid #333;
     border-radius: 8px;
     outline: none;
     margin-bottom: 1rem;
@@ -68,7 +74,7 @@ input[type="text"] {
 .paradigm-selector label {
     font-weight: 700;
     font-size: 1rem;
-    color: #333;
+    color: #bbb;
 }
 
 .styled-select {
@@ -76,8 +82,9 @@ input[type="text"] {
     padding: 8px 8px;
     font-size: 0.90rem;
     border-radius: 8px;
-    border: 2px solid #f1f2f6;
-    background-color: #f8f9fa;
+    border: 2px solid #333;
+    background-color: #2d2d2d;
+    color: #fff;
     font-family: 'Roboto Mono', monospace;
     transition: all 0.2s ease-in-out;
     cursor: pointer;
@@ -86,13 +93,11 @@ input[type="text"] {
 }
 
 .styled-select:hover {
-    border-color: #764ba2;
-    box-shadow: 0 4px 8px rgba(118, 75, 162, 0.2);
+    border-color: #ff9500;
 }
 
 .styled-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    border-color: #ff9500;
 }
 
 /* --- Operators --- */
@@ -106,7 +111,8 @@ input[type="text"] {
 button {
     padding: 12px;
     border: none;
-    background-color: #f1f2f6;
+    background-color: #333;
+    color: white;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
@@ -114,8 +120,7 @@ button {
 }
 
 button:hover {
-    background-color: #764ba2;
-    color: white;
+    background-color: #444;
 }
 
 /* --- Utility Buttons --- */
@@ -127,42 +132,56 @@ button:hover {
 
 .btn-clear { 
     flex: 2; 
+<<<<<<< HEAD
     background-color: #ffbc3f;
     color: white; 
+=======
+    background-color: #ff9500; 
+    color: #000; 
+>>>>>>> ac41a558754e084a6747d53962cf2e6dbbc965d4
 }
 
 .btn-delete {
     flex: 1;
+<<<<<<< HEAD
     background-color: #b63b3b; 
+=======
+    background-color: #444; 
+>>>>>>> ac41a558754e084a6747d53962cf2e6dbbc965d4
     color: white;
 }
 
 .btn-copy { 
     flex: 1; 
+<<<<<<< HEAD
     background-color: #69aa65; 
+=======
+    background-color: #444; 
+>>>>>>> ac41a558754e084a6747d53962cf2e6dbbc965d4
     color: white; 
 }
 
 .btn-equal {
     flex: 1;
-    background-color: #666; 
-    color: white;
+    background-color: #ff9500; 
+    color: #000;
 }
 
 /* --- Result Display --- */
 .result {
     padding: 15px;
-    background-color: #f8f9fa;
+    background-color: #121212;
+    color: #ffffff;
     border-radius: 10px;
     font-weight: bold;
     margin-bottom: 1rem;
-    border: 1px dashed #ccc;
+    border: 1px dashed #444;
 }
 
 /* --- History Section --- */
 .history-section {
     text-align: left;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #333;
     padding-top: 10px;
 }
 
@@ -173,22 +192,50 @@ button:hover {
     flex: 1;
     overflow-y: auto;
     font-size: 1rem;
-    color: #666;
+    color: #bbb;
     font-family: 'Roboto Mono', monospace;
-
-    /* Background for history */
-    background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+    background: #121212;
     border-radius: 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #333;
 }
 
 /* --- History Button --- */
 .btn-history {
     margin-top: 10px;
-    background-color: #2f3542; 
+    background-color: #333; 
     color: white;
     padding: 10px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+}
+
+/* --- Error State with Shake --- */
+.result.error-state {
+    background-color: #3d1a1a;
+    color: #f87171;
+    border: 1px solid #b63b3b;
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    50% { transform: translateX(8px); }
+    75% { transform: translateX(-4px); }
+}
+
+/* --- Success State --- */
+.result.success-state {
+    background-color: #1b3320;
+    color: #4ade80;
+    border: 1px solid #2e7d32;
+    animation: pop 0.3s ease-out;
+}
+
+/* Subtle scale-up effect for success */
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
 }
