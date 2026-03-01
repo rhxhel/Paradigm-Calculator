@@ -1,294 +1,221 @@
-let lastResult = null;
-let justCalculated = false;
+let memoryValue = 0;
+let activeTab = 'calc-tab';
 
-//--- Part A: Procedural ---
-function evaluateProcedural(expr) {
-    const tokens = parseTokens(expr);
-    let result = parseFloat(tokens[0]);
-
-    for (let i = 1; i < tokens.length; i += 2) {
-        const operator = tokens[i];
-        const num = parseFloat(tokens[i + 1]);
-
-        if (operator === '+') result += num;
-        else if (operator === '-') result -= num;
-        else if (operator === '*') result *= num;
-        else if (operator === '/') {
-            if (num === 0) throw new Error();
-            result /= num;
-        }
-        else if (operator === '%') {
-            if (num === 0) throw new Error();
-            result %= num;
-        }
+// --- TAB MANAGEMENT ---
+function switchTab(tabId) {
+    activeTab = tabId;
+    const wrapper = document.getElementById('app-wrapper');
+    
+    // UI Tab Updates
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
     }
 
-    if (!isFinite(result)) throw new Error();
-    return result;
+    const display = document.getElementById('resultDisplay');
+    display.innerText = 'Result: --';
+    display.classList.remove('error-state', 'success-state');
+
+    if (tabId === 'convert-tab') {
+        wrapper.classList.add('converter-mode');
+    } else {
+        wrapper.classList.remove('converter-mode');
+    }
 }
 
-//--- Part B: OOP ---
-class SmartCalculator {
-    constructor() {
-        this.result = 0;
+// --- TOKEN PARSING ---
+function parseTokens(expr) {
+    let normalized = expr.replace(/--/g, '+').replace(/\+-/g, '-');
+    let tokens = normalized.split(/([+\-*/%])/).map(t => t.trim()).filter(t => t !== "");
+    
+    if (tokens[0] === "-" && tokens.length > 1) {
+        tokens = ["-" + tokens[1], ...tokens.slice(2)];
     }
 
-    calculate(expr) {
-        const tokens = parseTokens(expr);
-        this.result = parseFloat(tokens[0]);
+    const fixedTokens = [];
+    for (let i = 0; i < tokens.length; i++) {
+        if (["*", "/", "+", "-", "%"].includes(tokens[i]) && tokens[i+1] === "-") {
+            fixedTokens.push(tokens[i]);
+            fixedTokens.push("-" + tokens[i+2]); 
+            i += 2; 
+        } else {
+            fixedTokens.push(tokens[i]);
+        }
+    }
+    return fixedTokens;
+}
 
+// ============================================================
+// PARADIGM 1: PROCEDURAL
+// ============================================================
+function evaluateProcedural(tokens) {
+    let res = parseFloat(tokens[0]);
+    for (let i = 1; i < tokens.length; i += 2) {
+        let op = tokens[i], next = parseFloat(tokens[i+1]);
+        if ((op === '/' || op === '%') && next === 0) throw new Error("DivZero");
+        if (op === '+') res += next;
+        else if (op === '-') res -= next;
+        else if (op === '*') res *= next;
+        else if (op === '/') res /= next;
+        else if (op === '%') res %= next;
+    }
+    return res;
+}
+
+// ============================================================
+// PARADIGM 2: OBJECT-ORIENTED (OOP)
+// ============================================================
+class SmartCalculator {
+    calculate(tokens) {
+        let res = parseFloat(tokens[0]);
         for (let i = 1; i < tokens.length; i += 2) {
-            const operator = tokens[i];
-            const num = parseFloat(tokens[i + 1]);
-
-            switch (operator) {
-                case '+': this.result += num; break;
-                case '-': this.result -= num; break;
-                case '*': this.result *= num; break;
-                case '/':
-                    if (num === 0) throw new Error();
-                    this.result /= num;
-                    break;
-                case '%':
-                    if (num === 0) throw new Error();
-                    this.result %= num;
-                    break;
+            let op = tokens[i], next = parseFloat(tokens[i+1]);
+            if ((op === '/' || op === '%') && next === 0) throw new Error("DivZero");
+            switch(op) {
+                case '+': res += next; break;
+                case '-': res -= next; break;
+                case '*': res *= next; break;
+                case '/': res /= next; break;
+                case '%': res %= next; break;
             }
         }
-
-        if (!isFinite(this.result)) throw new Error();
-        return this.result;
+        return res;
     }
 }
 
-//--- Part C: Functional ---
-function evaluateFunctional(expr) {
-    const tokens = parseTokens(expr);
-
+// ============================================================
+// PARADIGM 3: FUNCTIONAL
+// ============================================================
+function evaluateFunctional(tokens) {
     return tokens.slice(1).reduce((acc, val, idx) => {
         if (idx % 2 === 0) return acc;
-
-        const operator = tokens[idx];
-        const num = parseFloat(tokens[idx + 1]);
-
-        switch (operator) {
-            case '+': return acc + num;
-            case '-': return acc - num;
-            case '*': return acc * num;
-            case '/':
-                if (num === 0) throw new Error();
-                return acc / num;
-            case '%':
-                if (num === 0) throw new Error();
-                return acc % num;
-        }
+        let op = tokens[idx], next = parseFloat(tokens[idx+1]);
+        if ((op === '/' || op === '%') && next === 0) throw new Error("DivZero");
+        if (op === '+') return acc + next;
+        if (op === '-') return acc - next;
+        if (op === '*') return acc * next;
+        if (op === '/') return acc / next;
+        if (op === '%') return acc % next;
     }, parseFloat(tokens[0]));
 }
 
-//--- Helpers ---
-function parseTokens(expr) {
-    let tokens = expr.split(/([+\-*/%])/).map(t => t.trim());
-
-    if (tokens[0] === "" && tokens[1] === "-") {
-        tokens = ["-" + tokens[2], ...tokens.slice(3)];
+// --- CORE ACTION HANDLER ---
+function handleMainAction() {
+    if (activeTab === 'convert-tab') {
+        runConversion();
+        return;
     }
 
-    return tokens;
-}
-
-function isValidExpression(expr) {
-    if (!/^[0-9+\-*/.%()]+$/.test(expr)) return false;
-
-    let balance = 0;
-    for (let char of expr) {
-        if (char === '(') balance++;
-        else if (char === ')') balance--;
-        if (balance < 0) return false;
-    }
-    if (balance !== 0) return false;
-
-    if (/[+\-*/%]$/.test(expr)) return false;
-
-    let exp = expr.replace(/\(\-/g, '(');
-    if (/[+\-*/%]{2,}/.test(exp)) return false;
-
-    return true;
-}
-
-function preprocessExpression(expr) {
-    expr = expr.replace(/(\d)\(/g, '$1*(');
-    expr = expr.replace(/\)(\d)/g, ')*$1');
-    expr = expr.replace(/\)\(/g, ')*(');
-    return expr;
-}
-
-function evaluateWithParentheses(expr) {
-    try {
-        expr = preprocessExpression(expr);
-        let result = Function(`"use strict"; return (${expr})`)();
-
-        if (!isFinite(result)) throw new Error();
-        return result;
-    } catch {
-        throw new Error();
-    }
-}
-
-//--- Event Driven ---
-document.addEventListener('keydown', (event) => {
-    const key = event.key;
-    const allowed = ['+', '-', '*', '/', '%', '(', ')'];
-
-    if (!isNaN(key) || key === '.' || allowed.includes(key)) appendValue(key);
-    else if (key === 'Enter') handleAction();
-    else if (key === 'Backspace') deleteLast();
-    else if (key === 'Escape') clearCalculator();
-
-    if (!isNaN(key) || allowed.includes(key) || ['Enter','Backspace','Escape'].includes(key)) {
-        event.preventDefault();
-    }
-});
-
-//--- Input ---
-function appendValue(value) {
     const input = document.getElementById('expressionInput');
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
-
-    if (justCalculated && input.value === '' && ['+', '-', '*', '/', '%', '(', ')'].includes(value)) {
-        input.value = lastResult + value;
-        justCalculated = false;
-        input.selectionStart = input.selectionEnd = input.value.length;
-        return;
-    }
-
-    if (justCalculated && /[0-9.]/.test(value)) {
-        input.value = value;
-        justCalculated = false;
-        input.selectionStart = input.selectionEnd = input.value.length;
-        return;
-    }
-
-    const before = input.value.substring(0, start);
-    const after = input.value.substring(end);
-    input.value = before + value + after;
-
-    input.selectionStart = input.selectionEnd = start + value.length;
-    justCalculated = false;
-}
-
-//--- History ---
-function addToHistory(expr, result) {
-    const list = document.getElementById('historyList');
-    const entry = document.createElement('li');
-    entry.innerText = `${expr} = ${result}`;
-    list.prepend(entry);
-}
-
-function clearHistory() {
-    document.getElementById('historyList').innerHTML = '';
-}
-
-//--- Clear / Delete / Copy ---
-function clearCalculator() {
     const display = document.getElementById('resultDisplay');
+    const mode = document.getElementById('paradigmChoice').value;
+    
+    display.classList.remove('error-state', 'success-state');
+
+    try {
+        if (!input.value || !/^[0-9+\-*/.%()]+$/.test(input.value)) throw new Error("Invalid");
+        
+        let result;
+        if (input.value.includes('(')) {
+            result = Function(`"use strict"; return (${input.value})`)();
+        } else {
+            const tokens = parseTokens(input.value);
+            if (mode === 'procedural') result = evaluateProcedural(tokens);
+            else if (mode === 'oop') result = new SmartCalculator().calculate(tokens);
+            else result = evaluateFunctional(tokens);
+        }
+
+        if (isNaN(result) || !isFinite(result)) throw new Error("MathError");
+
+        display.innerText = `Result: ${result}`;
+        display.classList.add('success-state');
+        addToHistory(input.value, result);
+        input.value = '';
+    } catch (e) {
+        let errorMsg = "Error";
+        if (e.message === "DivZero") errorMsg = "Cannot be divided by 0!";
+        if (e.message === "MathError") errorMsg = "Invalid Math";
+        triggerError(errorMsg);
+    }
+}
+
+// --- CONVERTER LOGIC ---
+function runConversion() {
+    const type = document.getElementById('convertType').value;
+    const val = parseFloat(document.getElementById('convertInput').value);
+    const display = document.getElementById('resultDisplay');
+    
+    if (isNaN(val)) { 
+        triggerError("Invalid Input"); 
+        return; 
+    }
+
+    let res;
+    if (type === 'length') res = (val * 3.28084).toFixed(2) + " ft";
+    else if (type === 'temp') res = ((val * 9/5) + 32).toFixed(2) + " °F";
+    else res = (val * 2.20462).toFixed(2) + " lbs";
+
+    display.innerText = `Result: ${res}`;
+    display.classList.add('success-state');
+}
+
+// --- UI HELPERS ---
+function triggerError(msg) {
+    const display = document.getElementById('resultDisplay');
+    display.innerText = `Result: ${msg}`;
+    display.classList.remove('success-state', 'error-state');
+    void display.offsetWidth; 
+    display.classList.add('error-state');
+}
+
+function appendValue(v) {
+    const id = activeTab === 'calc-tab' ? 'expressionInput' : 'convertInput';
+    const input = document.getElementById(id);
+    if (v === '.' && input.value.includes('.')) return;
+    input.value += v;
+}
+
+function clearUI() {
     document.getElementById('expressionInput').value = '';
+    document.getElementById('convertInput').value = '';
+    const display = document.getElementById('resultDisplay');
     display.innerText = 'Result: --';
     display.classList.remove('error-state', 'success-state');
 }
 
 function deleteLast() {
-    const input = document.getElementById('expressionInput');
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
-
-    if (start === end) {
-        // No selection, delete character before cursor
-        if (start === 0) return;
-        input.value =
-            input.value.slice(0, start - 1) +
-            input.value.slice(end);
-        input.selectionStart = input.selectionEnd = start - 1;
-    } else {
-        // Delete selected text
-        input.value =
-            input.value.slice(0, start) +
-            input.value.slice(end);
-        input.selectionStart = input.selectionEnd = start;
-    }
+    const id = activeTab === 'calc-tab' ? 'expressionInput' : 'convertInput';
+    const el = document.getElementById(id);
+    el.value = el.value.slice(0, -1);
 }
+
+// --- MEMORY ---
+function memoryClear() { memoryValue = 0; }
+function memoryRecall() { appendValue(memoryValue); }
+function memoryAdd() {
+    const res = parseFloat(document.getElementById('resultDisplay').innerText.replace('Result: ', ''));
+    if (!isNaN(res)) memoryValue += res;
+}
+function memorySubtract() {
+    const res = parseFloat(document.getElementById('resultDisplay').innerText.replace('Result: ', ''));
+    if (!isNaN(res)) memoryValue -= res;
+}
+
+// --- HISTORY & UTILS ---
+function addToHistory(e, r) {
+    const li = document.createElement('li');
+    li.innerText = `${e} = ${r}`;
+    document.getElementById('historyList').prepend(li);
+}
+
+function clearHistory() { document.getElementById('historyList').innerHTML = ''; }
 
 function copyResult() {
-    const display = document.getElementById('resultDisplay');
-    const input = document.getElementById('expressionInput');
-    const res = display.innerText.replace('Result: ', '');
-
-    if (res !== '--' && res !== 'Error') {
-        input.value += res;
-        lastResult = res;
-        justCalculated = false;
-        navigator.clipboard.writeText(res);
+    const res = document.getElementById('resultDisplay').innerText.replace('Result: ', '');
+    if (!res.includes('--') && !res.includes('Error')) {
+        appendValue(parseFloat(res));
     }
 }
-
-//--- Main Handler ---
-function handleAction() {
-    const input = document.getElementById('expressionInput');
-    const expression = input.value;
-    const display = document.getElementById('resultDisplay');
-    const mode = document.getElementById('paradigmChoice')?.value;
-
-    // Helper to clear both states
-    const resetDisplayClasses = () => {
-        display.classList.remove('error-state', 'success-state');
-    };
-
-    // Helper for error UI
-    const triggerError = (msg) => {
-        display.innerText = `Result: ${msg}`;
-        resetDisplayClasses();
-        void display.offsetWidth; // Restart animation
-        display.classList.add('error-state');
-    };
-
-    if (!expression) {
-        triggerError("Enter expression!");
-        return;
-    }
-
-    if (!isValidExpression(expression)) {
-        triggerError("Error");
-        return;
-    }
-
-    try {
-        let result;
-        if (expression.includes("(")) {
-            result = evaluateWithParentheses(expression);
-        } else {
-            if (mode === 'procedural') result = evaluateProcedural(expression);
-            else if (mode === 'oop') result = new SmartCalculator().calculate(expression);
-            else if (mode === 'functional') result = evaluateFunctional(expression);
-        }
-
-        // --- SUCCESS LOGIC ---
-        display.innerText = `Result: ${result}`;
-        resetDisplayClasses();
-        void display.offsetWidth; // Restart animation
-        display.classList.add('success-state');
-        
-        addToHistory(expression, result);
-        lastResult = result;
-        justCalculated = true;
-        input.value = '';
-
-    } catch {
-        triggerError("Error");
-    }
-}
-
-//--- Input Filter ---
-const inputField = document.getElementById('expressionInput');
-inputField.addEventListener('input', function () {
-    this.value = this.value.replace(/[^0-9+\-*/.%()]/g, '');
-});
