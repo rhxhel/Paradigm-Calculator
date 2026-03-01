@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Smart Arithmetic Calculator</title>
+    <title>Paradigm Calculator</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="calculator-container">
-        <!-- Calculator Card -->
         <div class="calculator-card">
-            <h2>Smart Arithmetic Calculator</h2>
+            <h2>Paradigm Calculator</h2>
 
             <div class="paradigm-selector">
                 <label for="paradigmChoice">Calculation Mode:</label>
@@ -18,57 +17,54 @@
                     <option value="procedural">Procedural</option>
                     <option value="oop">Object-Oriented</option>
                     <option value="functional">Functional</option>
-                    <option value="event" selected>Event-Driven</option>
                 </select>
             </div>
 
-            <!-- Display / Input -->
-            <input type="text" id="expressionInput" placeholder="Enter expression or use buttons">
+            <div class="inputs">
+                <input type="text" id="expressionInput" placeholder="Enter expression or use buttons">
+            </div>
 
-            <!-- Number & Operator Buttons -->
             <div class="operators">
-                <button data-value="7">7</button>
-                <button data-value="8">8</button>
-                <button data-value="9">9</button>
-                <button data-value="/">÷</button>
+                <button onclick="appendValue('7')">7</button>
+                <button onclick="appendValue('8')">8</button>
+                <button onclick="appendValue('9')">9</button>
+                <button onclick="appendValue('/')">÷</button>
 
-                <button data-value="4">4</button>
-                <button data-value="5">5</button>
-                <button data-value="6">6</button>
-                <button data-value="*">×</button>
+                <button onclick="appendValue('4')">4</button>
+                <button onclick="appendValue('5')">5</button>
+                <button onclick="appendValue('6')">6</button>
+                <button onclick="appendValue('*')">×</button>
 
-                <button data-value="1">1</button>
-                <button data-value="2">2</button>
-                <button data-value="3">3</button>
-                <button data-value="-">−</button>
+                <button onclick="appendValue('1')">1</button>
+                <button onclick="appendValue('2')">2</button>
+                <button onclick="appendValue('3')">3</button>
+                <button onclick="appendValue('-')">−</button>
 
-                <button data-value="0">0</button>
-                <button data-value=".">.</button>
-                <button data-value="%">%</button>
-                <button data-value="+">+</button>
+                <button onclick="appendValue('0')">0</button>
+                <button onclick="appendValue('.')">.</button>
+                <button onclick="appendValue('%')">%</button>
+                <button onclick="appendValue('+')">+</button>
+
+                <button onclick="appendValue('(')">(</button>
+                <button onclick="appendValue(')')">)</button>
+                <button onclick="deleteLast()" class="btn-delete">DEL</button>
+                <button onclick="copyResult()" class="btn-copy">ANS</button>
             </div>
 
-            <!-- Utility Buttons -->
             <div class="utility-buttons">
-                <button id="btnClear" class="btn-clear">AC</button>
-                <button id="btnDelete" class="btn-delete">DEL</button>
-                <button id="btnCopy" class="btn-copy">Copy</button>
-                <button id="btnPaste" class="btn-paste">Paste</button>
-                <button id="btnEqual" class="btn-equal">=</button>
+                <button onclick="clearCalculator()" class="btn-clear">AC</button>
+                <button onclick="handleAction()" class="btn-equal">=</button>
             </div>
 
-            <!-- Result Display -->
             <div id="resultDisplay" class="result">Result: --</div>
         </div>
 
-        <!-- History Card -->
         <div class="history-card">
             <h2>Recent Calculations</h2>
             <ul id="historyList"></ul>
-            <button id="btnClearHistory" class="btn-history">Clear History</button>
+            <button onclick="clearHistory()" class="btn-history">Clear History</button>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
-</html>
