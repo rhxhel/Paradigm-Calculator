@@ -20,10 +20,10 @@ body {
     padding: 2rem;
     border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-    width: 350px;
-    height: 500px;
+    width: 350px;/* height: 500px; remove fixed height */
     display: flex;
     flex-direction: column;
+    max-height: 90vh; /* Prevent it from going off screen */
 }
 
 .calculator-card h2{
@@ -49,10 +49,10 @@ body {
 
 /* --- Input Field --- */
 input[type="text"] {
-    font-family: 'Roboto Mono', monospace; /* Input field font */
+    font-family: 'Roboto Mono', monospace;
     font-size: 1rem;
-    width: 325px;
-    padding: 10px;
+    width: 100%; /* fit container */
+    padding: 8px; /* slightly smaller */
     border: 2px solid #f1f2f6;
     border-radius: 8px;
     outline: none;
@@ -149,6 +149,12 @@ button:hover {
     color: white;
 }
 
+.btn-paste {
+    flex: 1;
+    background-color: #1e90ff; 
+    color: white;
+}
+
 /* --- Result Display --- */
 .result {
     padding: 15px;
@@ -192,3 +198,48 @@ button:hover {
     border-radius: 8px;
     cursor: pointer;
 }
+
+/* --- Operators (Keypad Layout) --- */
+.operators {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden; /* prevent scroll */
+}
+
+.operators button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    box-sizing: border-box;
+}
+
+.operators button:hover {
+    background-color: #764ba2;
+    color: white;
+}
+
+/* --- Utility Buttons --- */
+.utility-buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 buttons */
+    gap: 4px; /* slightly smaller gap to fit */
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden; /* prevent scroll */
+}
+
+.utility-buttons button {
+    width: 100%;
+    padding: 8px; /* slightly smaller padding to fit container */
+    font-size: 0.95rem; /* shrink font slightly */
+    box-sizing: border-box;
+}
+
+.btn-clear { background-color: #ffa502; color: white; }
+.btn-delete { background-color: #ff6b81; color: white; }
+.btn-copy { background-color: #1e90ff; color: white; }
+.btn-equal { background-color: #2ed573; color: white; }

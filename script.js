@@ -1,153 +1,147 @@
-let lastResult = null;
-let justCalculated = false;
+/**
+ * SMART ARITHMETIC CALCULATOR - MULTI-PARADIGM IMPLEMENTATION
+ * Parts: A - Procedural, B - OOP, C - Functional, D - Event-Driven
+ */
 
-// --- Procedural Logic ---
-function evaluateProcedural(expr) {
-    return eval(expr);
-}
-
-// --- OOP Logic ---
-class SmartCalculator {
-    constructor(expression) {
-        this.expression = expression;
-    }
-
-    execute() {
-        return eval(this.expression);
-    }
-}
-
-// --- Functional Logic ---
-function evaluateFunctional(expr) {
-    const compute = (expression) => eval(expression);
-    return compute(expr);
-}
-
-// --- MAIN HANDLER ---
-function handleAction() {
-    const input = document.getElementById('expressionInput');
-    const expression = input.value;
-    const mode = document.getElementById('paradigmChoice').value;
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Global References ---
+    const inputField = document.getElementById('expressionInput');
+    const paradigmSelect = document.getElementById('paradigmChoice');
     const display = document.getElementById('resultDisplay');
+    const historyList = document.getElementById('historyList');
 
-    if (!expression) {
-        display.innerText = "Result: Enter expression!";
-        return;
+    // --- PART A: Procedural Paradigm ---
+    function proceduralCalculator(n1, n2, op) {
+        if (op === '+') return n1 + n2;
+        if (op === '-') return n1 - n2;
+        if (op === '*') return n1 * n2;
+        if (op === '/') return n2 === 0 ? "Error: Division by 0" : n1 / n2;
+        if (op === '%') return n2 === 0 ? "Error: Modulus by 0" : n1 % n2;
+        return "Error: Invalid Operator";
     }
 
-    try {
-        let result;
+    // --- PART B: Object-Oriented Paradigm ---
+    class Calculator {
+        constructor(n1, n2, op) {
+            this.n1 = n1;
+            this.n2 = n2;
+            this.op = op;
+        }
+        compute() {
+            switch (this.op) {
+                case '+': return this.n1 + this.n2;
+                case '-': return this.n1 - this.n2;
+                case '*': return this.n1 * this.n2;
+                case '/': return this.n2 === 0 ? "Error: Division by 0" : this.n1 / this.n2;
+                case '%': return this.n2 === 0 ? "Error: Modulus by 0" : this.n1 % this.n2;
+                default: return "Error: Invalid Operator";
+            }
+        }
+    }
 
-        if (mode === 'procedural') {
-            result = evaluateProcedural(expression);
-        } else if (mode === 'oop') {
-            result = new SmartCalculator(expression).execute();
-        } else if (mode === 'functional') {
-            result = evaluateFunctional(expression);
-        } else {
-            result = eval(expression);
+    // --- PART C: Functional Paradigm ---
+    function functionalCalculator(n1, n2, op) {
+        const operations = {
+            '+': (a, b) => a + b,
+            '-': (a, b) => a - b,
+            '*': (a, b) => a * b,
+            '/': (a, b) => b === 0 ? "Error: Division by 0" : a / b,
+            '%': (a, b) => b === 0 ? "Error: Modulus by 0" : a % b
+        };
+        return operations[op] ? operations[op](n1, n2) : "Error: Invalid Operator";
+    }
+
+    // --- HISTORY MANAGEMENT ---
+    function addToHistory(n1, n2, op, result) {
+        const li = document.createElement('li');
+        li.innerText = `${n1} ${op} ${n2} = ${result}`;
+        historyList.prepend(li);
+    }
+
+    function clearHistory() {
+        historyList.innerHTML = '';
+    }
+
+    // --- CORE CALCULATION HANDLER ---
+    function handleAction() {
+        const expression = inputField.value.trim();
+        const paradigm = paradigmSelect.value;
+
+        // Validate input
+        const match = expression.match(/(\d+\.?\d*)\s*([\+\-\*\/\%])\s*(\d+\.?\d*)/);
+        if (!match) {
+            display.innerText = "Result: Invalid expression!";
+            return;
+        }
+
+        const n1 = parseFloat(match[1]);
+        const op = match[2];
+        const n2 = parseFloat(match[3]);
+
+        let result;
+        switch (paradigm) {
+            case 'procedural': result = proceduralCalculator(n1, n2, op); break;
+            case 'oop': result = new Calculator(n1, n2, op).compute(); break;
+            case 'functional': result = functionalCalculator(n1, n2, op); break;
+            default: result = proceduralCalculator(n1, n2, op);
         }
 
         display.innerText = `Result: ${result}`;
-        addToHistory(expression, result);
-
-        // SAVE RESULT
-        lastResult = result;
-        justCalculated = true;
-
-        // CLEAR INPUT
-        input.value = '';
-
-    } catch (err) {
-        display.innerText = "Result: Error";
-    }
-}
-
-// --- Append Button Click / Keyboard Input ---
-function appendValue(value) {
-    const input = document.getElementById('expressionInput');
-
-    // Continue calculation if operator pressed after result
-    if (justCalculated && input.value === '' && ['+', '-', '*', '/'].includes(value)) {
-        input.value = lastResult + value;
-        justCalculated = false;
-        return;
+        addToHistory(n1, n2, op, result);
+        inputField.value = '';
     }
 
-    // Start fresh if typing number after result
-    if (justCalculated && /[0-9.]/.test(value)) {
-        input.value = value;
-        justCalculated = false;
-        return;
+    // --- PART D: Event-Driven Paradigm ---
+    function setupEventDriven() {
+        // Number/Operator Buttons
+        document.querySelectorAll('.operators button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                inputField.value += btn.getAttribute('data-value');
+            });
+        });
+
+        // Utility Buttons
+        document.getElementById('btnClear').addEventListener('click', () => {
+            inputField.value = '';
+            display.innerText = 'Result: --';
+        });
+
+        document.getElementById('btnDelete').addEventListener('click', () => {
+            inputField.value = inputField.value.slice(0, -1);
+        });
+
+        document.getElementById('btnCopy').addEventListener('click', () => {
+            const result = display.innerText.replace('Result: ', '');
+            if (result && !isNaN(result)) navigator.clipboard.writeText(result);
+        });
+
+        document.getElementById('btnEqual').addEventListener('click', handleAction);
+        document.getElementById('btnClearHistory').addEventListener('click', clearHistory);
+
+        // Keyboard Support
+        document.addEventListener('keydown', (e) => {
+            const allowed = ['+', '-', '*', '/', '%', '.', 'Enter', 'Backspace', 'Escape'];
+            if (!isNaN(e.key) || allowed.includes(e.key)) {
+                if (e.key === 'Enter') handleAction();
+                else if (e.key === 'Backspace') inputField.value = inputField.value.slice(0, -1);
+                else if (e.key === 'Escape') inputField.value = '';
+                else inputField.value += e.key;
+                e.preventDefault();
+            }
+        });
     }
 
-    input.value += value;
-    justCalculated = false;
-}
-
-// --- History Management ---
-function addToHistory(expr, result) {
-    const list = document.getElementById('historyList');
-    const entry = document.createElement('li');
-    entry.innerText = `${expr} = ${result}`;
-    list.prepend(entry);
-}
-
-function clearHistory() {
-    document.getElementById('historyList').innerHTML = '';
-}
-
-// --- Clear / Delete / Copy ---
-function clearCalculator() {
-    document.getElementById('expressionInput').value = '';
-    document.getElementById('resultDisplay').innerText = 'Result: --';
-}
-
-function deleteLast() {
-    const input = document.getElementById('expressionInput');
-    input.value = input.value.slice(0, -1);
-}
-
-function copyResult() {
-    const display = document.getElementById('resultDisplay');
-    const input = document.getElementById('expressionInput');
-    const res = display.innerText.replace('Result: ', '');
-
-    if (res !== '--' && res !== 'Error') {
-        input.value += res; // append last result
-        lastResult = res;
-        justCalculated = false;
-
-        // Copy to clipboard
-        navigator.clipboard.writeText(res);
-    }
-}
-
-// --- Restrict Keyboard Input in Field ---
-const inputField = document.getElementById('expressionInput');
-inputField.addEventListener('input', function () {
-    this.value = this.value.replace(/[^0-9+\-*/.%]/g, '');
+    // Activate Event-Driven setup
+    setupEventDriven();
 });
 
-// --- Keyboard Support for Calculator ---
-document.addEventListener('keydown', (event) => {
-    const key = event.key;
-    const allowedOperators = ['+', '-', '*', '/', '%']; // add '%' here
-
-    if (!isNaN(key) || key === '.' || key === '%') {
-        appendValue(key);
-    } else if (allowedOperators.includes(key)) {
-        appendValue(key);
-    } else if (key === 'Enter') {
-        handleAction();
-    } else if (key === 'Backspace') {
-        deleteLast();
-    } else if (key === 'Escape') {
-        clearCalculator();
-    }
-
-    // Prevent default for handled keys
-    if (!isNaN(key) || allowedOperators.includes(key) || ['Enter', 'Backspace', 'Escape'].includes(key)) {
-        event.preventDefault();
+// Paste from clipboard into calculator input
+document.getElementById('btnPaste').addEventListener('click', async () => {
+    const input = document.getElementById('expressionInput');
+    try {
+        const text = await navigator.clipboard.readText(); // read clipboard
+        input.value += text; // append clipboard content
+    } catch (err) {
+        alert("Failed to read clipboard: " + err);
     }
 });
