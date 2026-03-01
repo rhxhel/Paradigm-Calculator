@@ -21,7 +21,7 @@ body {
     border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     width: 350px;
-    height: 500px;
+    height: 550px;
     display: flex;
     flex-direction: column;
 }
@@ -37,7 +37,7 @@ body {
     border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     width: 250px;
-    height: 500px;
+    height: 550px;
     display: flex;
     flex-direction: column;
 }
@@ -127,19 +127,19 @@ button:hover {
 
 .btn-clear { 
     flex: 2; 
-    background-color: #ffa502;
+    background-color: #ffbc3f;
     color: white; 
 }
 
 .btn-delete {
     flex: 1;
-    background-color: #ffa502; 
+    background-color: #b63b3b; 
     color: white;
 }
 
 .btn-copy { 
     flex: 1; 
-    background-color: #ff4757; 
+    background-color: #69aa65; 
     color: white; 
 }
 
