@@ -44,12 +44,15 @@
                 <button onclick="appendValue('.')">.</button>
                 <button onclick="appendValue('%')">%</button>
                 <button onclick="appendValue('+')">+</button>
+
+                <button onclick="appendValue('(')">(</button>
+                <button onclick="appendValue(')')">)</button>
+                <button onclick="deleteLast()" class="btn-delete">DEL</button>
+                <button onclick="copyResult()" class="btn-copy">Copy</button>
             </div>
 
             <div class="utility-buttons">
                 <button onclick="clearCalculator()" class="btn-clear">AC</button>
-                <button onclick="deleteLast()" class="btn-delete">DEL</button>
-                <button onclick="copyResult()" class="btn-copy">Copy</button>
                 <button onclick="handleAction()" class="btn-equal">=</button>
             </div>
 
