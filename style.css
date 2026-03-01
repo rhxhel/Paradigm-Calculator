@@ -26,6 +26,10 @@ body {
     flex-direction: column;
 }
 
+.calculator-card h2{
+    text-align: center;
+}
+
 /* --- History Card --- */
 .history-card {
     background: #ffffff;
@@ -38,8 +42,9 @@ body {
     flex-direction: column;
 }
 
-.history-card h4 {
+.history-card h2 {
     margin-bottom: 10px;
+    text-align: center;
 }
 
 /* --- Input Field --- */
@@ -58,6 +63,36 @@ input[type="text"] {
 .paradigm-selector {
     margin-bottom: 1rem;
     font-size: 1rem;
+}
+
+.paradigm-selector label {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #333;
+}
+
+.styled-select {
+    width: 205px;
+    padding: 8px 8px;
+    font-size: 0.90rem;
+    border-radius: 8px;
+    border: 2px solid #f1f2f6;
+    background-color: #f8f9fa;
+    font-family: 'Roboto Mono', monospace;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    outline: none;
+    margin-left: 3px;
+}
+
+.styled-select:hover {
+    border-color: #764ba2;
+    box-shadow: 0 4px 8px rgba(118, 75, 162, 0.2);
+}
+
+.styled-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
 }
 
 /* --- Operators --- */
@@ -96,15 +131,21 @@ button:hover {
     color: white; 
 }
 
+.btn-delete {
+    flex: 1;
+    background-color: #ffa502; 
+    color: white;
+}
+
 .btn-copy { 
     flex: 1; 
     background-color: #ff4757; 
     color: white; 
 }
 
-.btn-delete {
+.btn-equal {
     flex: 1;
-    background-color: #ffa502; 
+    background-color: #666; 
     color: white;
 }
 
