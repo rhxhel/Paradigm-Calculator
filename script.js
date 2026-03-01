@@ -1,91 +1,153 @@
+let lastResult = null;
+let justCalculated = false;
+
 // --- Procedural Logic ---
-function calculateProcedural(a, b, op) {
-    if (b === 0 && (op === '/' || op === '%')) return "Error: Div by 0";
-    if (op === '+') return a + b;
-    if (op === '-') return a - b;
-    if (op === '*') return a * b;
-    if (op === '/') return a / b;
-    if (op === '%') return a % b;
-    return 0;
+function evaluateProcedural(expr) {
+    return eval(expr);
 }
 
 // --- OOP Logic ---
 class SmartCalculator {
-    constructor(a, b) { this.a = a; this.b = b; }
-    execute(op) {
-        if (this.b === 0 && (op === '/' || op === '%')) return "Error: Div by 0";
-        const math = { '+': this.a + this.b, '-': this.a - this.b, '*': this.a * this.b, '/': this.a / this.b, '%': this.a % this.b };
-        return math[op];
+    constructor(expression) {
+        this.expression = expression;
+    }
+
+    execute() {
+        return eval(this.expression);
     }
 }
 
 // --- Functional Logic ---
-const functionalMap = {
-    '+': (a, b) => a + b,
-    '-': (a, b) => a - b,
-    '*': (a, b) => a * b,
-    '/': (a, b) => b !== 0 ? a / b : "Error: Div by 0",
-    '%': (a, b) => b !== 0 ? a % b : "Error: Div by 0"
-};
+function evaluateFunctional(expr) {
+    const compute = (expression) => eval(expression);
+    return compute(expr);
+}
 
 // --- MAIN HANDLER ---
-function handleAction(op) {
-    const n1 = parseFloat(document.getElementById('num1').value);
-    const n2 = parseFloat(document.getElementById('num2').value);
+function handleAction() {
+    const input = document.getElementById('expressionInput');
+    const expression = input.value;
     const mode = document.getElementById('paradigmChoice').value;
     const display = document.getElementById('resultDisplay');
-    let result;
 
-    // Check for empty inputs
-    if (isNaN(n1) || isNaN(n2)) {
-        display.innerText = "Result: Enter numbers!";
+    if (!expression) {
+        display.innerText = "Result: Enter expression!";
         return;
     }
 
-    // Paradigm Switching Logic
     try {
+        let result;
+
         if (mode === 'procedural') {
-            result = calculateProcedural(n1, n2, op);
+            result = evaluateProcedural(expression);
         } else if (mode === 'oop') {
-            const calc = new SmartCalculator(n1, n2);
-            result = calc.execute(op);
+            result = new SmartCalculator(expression).execute();
         } else if (mode === 'functional') {
-            result = functionalMap[op](n1, n2);
+            result = evaluateFunctional(expression);
         } else {
-            // Event-Driven: Simple direct calculation
-            result = eval(`${n1} ${op} ${n2}`);
+            result = eval(expression);
         }
 
-        // Displaying the result accurately
         display.innerText = `Result: ${result}`;
-        
-        // Add to history if it's a valid number
-        if (typeof result === 'number') {
-            addToHistory(n1, op, n2, result);
-        }
+        addToHistory(expression, result);
+
+        // SAVE RESULT
+        lastResult = result;
+        justCalculated = true;
+
+        // CLEAR INPUT
+        input.value = '';
+
     } catch (err) {
         display.innerText = "Result: Error";
-        console.error(err);
     }
 }
 
-function addToHistory(n1, op, n2, res) {
+// --- Append Button Click / Keyboard Input ---
+function appendValue(value) {
+    const input = document.getElementById('expressionInput');
+
+    // Continue calculation if operator pressed after result
+    if (justCalculated && input.value === '' && ['+', '-', '*', '/'].includes(value)) {
+        input.value = lastResult + value;
+        justCalculated = false;
+        return;
+    }
+
+    // Start fresh if typing number after result
+    if (justCalculated && /[0-9.]/.test(value)) {
+        input.value = value;
+        justCalculated = false;
+        return;
+    }
+
+    input.value += value;
+    justCalculated = false;
+}
+
+// --- History Management ---
+function addToHistory(expr, result) {
     const list = document.getElementById('historyList');
     const entry = document.createElement('li');
-    entry.innerText = `${n1} ${op} ${n2} = ${res}`;
+    entry.innerText = `${expr} = ${result}`;
     list.prepend(entry);
 }
 
+function clearHistory() {
+    document.getElementById('historyList').innerHTML = '';
+}
+
+// --- Clear / Delete / Copy ---
 function clearCalculator() {
-    document.getElementById('num1').value = '';
-    document.getElementById('num2').value = '';
+    document.getElementById('expressionInput').value = '';
     document.getElementById('resultDisplay').innerText = 'Result: --';
 }
 
+function deleteLast() {
+    const input = document.getElementById('expressionInput');
+    input.value = input.value.slice(0, -1);
+}
+
 function copyResult() {
-    const res = document.getElementById('resultDisplay').innerText.replace('Result: ', '');
-    if (res !== '--') {
+    const display = document.getElementById('resultDisplay');
+    const input = document.getElementById('expressionInput');
+    const res = display.innerText.replace('Result: ', '');
+
+    if (res !== '--' && res !== 'Error') {
+        input.value += res; // append last result
+        lastResult = res;
+        justCalculated = false;
+
+        // Copy to clipboard
         navigator.clipboard.writeText(res);
-        alert("Copied: " + res);
     }
 }
+
+// --- Restrict Keyboard Input in Field ---
+const inputField = document.getElementById('expressionInput');
+inputField.addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9+\-*/.]/g, '');
+});
+
+// --- Keyboard Support for Calculator ---
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    const allowedOperators = ['+', '-', '*', '/'];
+
+    if (!isNaN(key) || key === '.') {
+        appendValue(key);
+    } else if (allowedOperators.includes(key)) {
+        appendValue(key);
+    } else if (key === 'Enter') {
+        handleAction();
+    } else if (key === 'Backspace') {
+        deleteLast();
+    } else if (key === 'Escape') {
+        clearCalculator();
+    }
+
+    // Prevent default for handled keys
+    if (!isNaN(key) || allowedOperators.includes(key) || ['Enter', 'Backspace', 'Escape'].includes(key)) {
+        event.preventDefault();
+    }
+});
