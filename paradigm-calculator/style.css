@@ -1,7 +1,6 @@
-/* --- Body & Layout --- */
+/* GENERAL PAGE STYLING */
 body {
     font-family: 'Segoe UI', sans-serif;
-    /* Night mode dark background */
     background: radial-gradient(circle, #1a1a1a 0%, #0d0d0d 100%);
     display: flex;
     justify-content: center;
@@ -10,103 +9,90 @@ body {
     margin: 0;
 }
 
-.calculator-container {
-    display: flex;
-    gap: 20px; /* space between calculator and history */
+.main-wrapper { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
 }
 
-/* --- Calculator Card --- */
-.calculator-card {
-    background: #1e1e1e; /* Minimalist dark gray */
-    color: #ffffff;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    width: 350px;
-    height: 550px;
-    display: flex;
-    flex-direction: column;
+.calculator-container { 
+    display: flex; 
+    gap: 20px; 
+}
+
+/* TAB NAVIGATION (TOP) */
+.tab-navigation { 
+    display: flex; 
+    gap: 5px; 
+    margin-bottom: 20px; 
+    z-index: 10; 
+}
+
+.tab-btn {
+    background: #252525;
+    color: #888;
+    padding: 10px 25px;
     border: 1px solid #333;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0; 
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
 }
 
-.calculator-card h2{
-    text-align: center;
+.tab-btn.active { 
+    background: #1e1e1e; 
+    color: #ff9500; 
+    border-bottom: 2px solid #ff9500; 
 }
 
-/* --- History Card --- */
-.history-card {
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* CARDS (CALCULATOR & HISTORY) */
+.calculator-card, .history-card {
     background: #1e1e1e;
     color: #ffffff;
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: 20px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    width: 250px;
-    height: 550px;
-    display: flex;
-    flex-direction: column;
     border: 1px solid #333;
+    height: 600px; 
 }
 
-.history-card h2 {
-    margin-bottom: 10px;
-    text-align: center;
-}
+.calculator-card { width: 350px; display: flex; flex-direction: column; }
+.history-card { width: 250px; display: flex; flex-direction: column; }
 
-/* --- Input Field --- */
-input[type="text"] {
-    font-family: 'Roboto Mono', monospace; /* Input field font */
-    font-size: 1rem;
-    width: 325px;
-    padding: 10px;
-    background-color: #2d2d2d;
-    color: #ff9500; /* Orange text for clarity */
+/* INPUTS & SELECTORS */
+input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    background: #2d2d2d;
+    color: #ff9500;
     border: 2px solid #333;
     border-radius: 8px;
-    outline: none;
+    font-family: 'Roboto Mono', monospace;
     margin-bottom: 1rem;
-}
-
-/* --- Paradigm Selector --- */
-.paradigm-selector {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-}
-
-.paradigm-selector label {
-    font-weight: 700;
-    font-size: 1rem;
-    color: #bbb;
 }
 
 .styled-select {
-    width: 205px;
-    padding: 8px 8px;
-    font-size: 0.90rem;
-    border-radius: 8px;
-    border: 2px solid #333;
-    background-color: #2d2d2d;
+    width: 100%;
+    padding: 10px;
+    background: #2d2d2d;
     color: #fff;
-    font-family: 'Roboto Mono', monospace;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-    outline: none;
-    margin-left: 3px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    margin-bottom: 1rem;
 }
 
-.styled-select:hover {
-    border-color: #ff9500;
-}
-
-.styled-select:focus {
-    border-color: #ff9500;
-}
-
-/* --- Operators --- */
+/* NUMPAD / OPERATORS GRID */
 .operators {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* 4 columns for calc mode */
     gap: 8px;
-    margin-bottom: 10px;
+    margin-top: auto;
+    margin-bottom: 15px;
 }
 
 button {
@@ -120,92 +106,36 @@ button {
     transition: 0.2s;
 }
 
-button:hover {
-    background-color: #444;
-}
+button:hover { background-color: #444; }
 
-/* --- Utility Buttons --- */
-.utility-buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 1rem;
-}
+.btn-mem { background-color: #252525; color: #ff9500; font-size: 0.8rem; }
 
-.btn-clear { 
-    flex: 2; 
-    background-color: #ff9500; /* Main Orange Accent */
-    color: #000; 
-}
+.btn-clear, .btn-equal { background-color: #ff9500; color: #000; }
 
-.btn-delete {
-    flex: 1;
-    background-color: #444; 
-    color: white;
-}
+.utility-buttons { display: flex; gap: 10px; margin-bottom: 1rem; }
+.utility-buttons button { flex: 1; }
 
-.btn-copy { 
-    flex: 1; 
-    background-color: #444; 
-    color: white; 
-}
-
-.btn-equal {
-    flex: 1;
-    background-color: #ff9500; /* Execution Orange */
-    color: #000;
-}
-
-/* --- Result Display --- */
+/* RESULT DISPLAY & STATES */
 .result {
     padding: 15px;
-    background-color: #121212;
-    color: #ffffff;
-    border-radius: 10px;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    border: 1px dashed #444;
-}
-
-/* --- History Section --- */
-.history-section {
-    text-align: left;
-    border-top: 1px solid #333;
-    padding-top: 10px;
-}
-
-/* --- History List --- */
-#historyList {
-    list-style: none;
-    padding: 10px;
-    flex: 1;
-    overflow-y: auto;
-    font-size: 1rem;
-    color: #bbb;
-    font-family: 'Roboto Mono', monospace;
-
-    /* Background for history */
     background: #121212;
-    border-radius: 12px;
+    border-radius: 10px;
     border: 1px solid #333;
+    text-align: center;
+    transition: 0.3s;
 }
 
-/* --- History Button --- */
-.btn-history {
-    margin-top: 10px;
-    background-color: #333; 
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-/* --- Error State with Shake --- */
 .result.error-state {
     background-color: #3d1a1a;
     color: #f87171;
     border: 1px solid #b63b3b;
     animation: shake 0.4s ease-in-out;
+}
+
+.result.success-state { 
+    background-color: #1b3320; 
+    color: #4ade80; 
+    border: 1px solid #2e7d32; 
 }
 
 @keyframes shake {
@@ -215,17 +145,36 @@ button:hover {
     75% { transform: translateX(-4px); }
 }
 
-/* --- Success State --- */
-.result.success-state {
-    background-color: #1b3320;
-    color: #4ade80;
-    border: 1px solid #2e7d32;
-    animation: pop 0.3s ease-out;
+/* HISTORY LIST */
+#historyList {
+    list-style: none;
+    padding: 10px;
+    background: #121212;
+    border-radius: 10px;
+    flex: 1;
+    overflow-y: auto; 
+    font-family: 'Roboto Mono', monospace;
 }
 
-/* Subtle scale-up effect for success */
-@keyframes pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
+/* CONVERTER MODE DYNAMIC OVERRIDES */
+
+.main-wrapper.converter-mode .calc-only {
+    display: none;
+}
+
+.main-wrapper.converter-mode .operators {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* CHROME/SAFARI NUMBER INPUT FIXES */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
