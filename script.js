@@ -126,15 +126,15 @@ function copyResult() {
 // --- Restrict Keyboard Input in Field ---
 const inputField = document.getElementById('expressionInput');
 inputField.addEventListener('input', function () {
-    this.value = this.value.replace(/[^0-9+\-*/.]/g, '');
+    this.value = this.value.replace(/[^0-9+\-*/.%]/g, '');
 });
 
 // --- Keyboard Support for Calculator ---
 document.addEventListener('keydown', (event) => {
     const key = event.key;
-    const allowedOperators = ['+', '-', '*', '/'];
+    const allowedOperators = ['+', '-', '*', '/', '%']; // add '%' here
 
-    if (!isNaN(key) || key === '.') {
+    if (!isNaN(key) || key === '.' || key === '%') {
         appendValue(key);
     } else if (allowedOperators.includes(key)) {
         appendValue(key);
