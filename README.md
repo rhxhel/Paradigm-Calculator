@@ -44,8 +44,6 @@ Performs standard arithmetic operations with proper error handling:
 - **Division (/)** – Produces the quotient of two numbers.
 - **Modulus (%)** – Returns the remainder after division.
 
-The system prevents invalid results such as division by zero.
-
 ---
 
 ### 2. Multiple Programming Paradigms
@@ -85,7 +83,7 @@ This allows easy comparison between different measurement systems.
 
 ### 4. User Input Handling
 
-- Supports both keyboard input and on-screen buttons.
+- Supports keyboard entry and on-screen buttons. Restricts other characters aside from numbers, operations, backspace (for delete), and enter (for result).
 - Tracks cursor position for accurate insertion and deletion.
 - Automatically manages input after calculations.
 - Allows seamless continuation using the previous result.
@@ -94,16 +92,13 @@ This allows easy comparison between different measurement systems.
 
 ### 5. Error Prevention
 
-- Blocks undefined mathematical operations.
-- Prevents division by zero.
-- Displays clear error messages instead of `Infinity` or `NaN`.
+- Prevents operations that would result in undefined results, such as division by zero or invalid expression.
 
 ---
 
 ### 6. History Tracking
 
 - Displays previous calculations.
-- Allows users to review and reuse past results efficiently.
 
 ---
 
