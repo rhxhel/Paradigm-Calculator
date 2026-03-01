@@ -203,20 +203,14 @@ function deleteLast() {
     const end = input.selectionEnd;
 
     if (start === end) {
-<<<<<<< HEAD
         // No selection, delete character before cursor
-=======
->>>>>>> ac41a558754e084a6747d53962cf2e6dbbc965d4
         if (start === 0) return;
         input.value =
             input.value.slice(0, start - 1) +
             input.value.slice(end);
         input.selectionStart = input.selectionEnd = start - 1;
     } else {
-<<<<<<< HEAD
         // Delete selected text
-=======
->>>>>>> ac41a558754e084a6747d53962cf2e6dbbc965d4
         input.value =
             input.value.slice(0, start) +
             input.value.slice(end);
@@ -244,10 +238,6 @@ function handleAction() {
     const display = document.getElementById('resultDisplay');
     const mode = document.getElementById('paradigmChoice')?.value;
 
-<<<<<<< HEAD
-    if (!expression) {
-        display.innerText = "Result: Enter expression!";
-=======
     // Helper to clear both states
     const resetDisplayClasses = () => {
         display.classList.remove('error-state', 'success-state');
@@ -257,31 +247,22 @@ function handleAction() {
     const triggerError = (msg) => {
         display.innerText = `Result: ${msg}`;
         resetDisplayClasses();
-        void display.offsetWidth; 
+        void display.offsetWidth; // Restart animation
         display.classList.add('error-state');
     };
 
     if (!expression) {
         triggerError("Enter expression!");
->>>>>>> ac41a558754e084a6747d53962cf2e6dbbc965d4
         return;
     }
 
     if (!isValidExpression(expression)) {
-<<<<<<< HEAD
-        display.innerText = "Result: Error";
-=======
         triggerError("Error");
->>>>>>> ac41a558754e084a6747d53962cf2e6dbbc965d4
         return;
     }
 
     try {
         let result;
-<<<<<<< HEAD
-
-=======
->>>>>>> ac41a558754e084a6747d53962cf2e6dbbc965d4
         if (expression.includes("(")) {
             result = evaluateWithParentheses(expression);
         } else {
@@ -290,29 +271,19 @@ function handleAction() {
             else if (mode === 'functional') result = evaluateFunctional(expression);
         }
 
-<<<<<<< HEAD
-        display.innerText = `Result: ${result}`;
-        addToHistory(expression, result);
-
-=======
         // --- SUCCESS LOGIC ---
         display.innerText = `Result: ${result}`;
         resetDisplayClasses();
-        void display.offsetWidth; 
+        void display.offsetWidth; // Restart animation
         display.classList.add('success-state');
         
         addToHistory(expression, result);
->>>>>>> ac41a558754e084a6747d53962cf2e6dbbc965d4
         lastResult = result;
         justCalculated = true;
         input.value = '';
 
     } catch {
-<<<<<<< HEAD
-        display.innerText = "Result: Error";
-=======
         triggerError("Error");
->>>>>>> ac41a558754e084a6747d53962cf2e6dbbc965d4
     }
 }
 
