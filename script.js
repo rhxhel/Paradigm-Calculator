@@ -1,80 +1,92 @@
 let lastResult = null;
 let justCalculated = false;
 
-// --- Procedural Paradigm Logic ---
+// --- Part A: Procedural Paradigm ---
 function evaluateProcedural(expr) {
-    return eval(expr);
+    const tokens = expr.split(/([+\-*/%])/).map(t => t.trim());
+    let result = parseFloat(tokens[0]);
+
+    for (let i = 1; i < tokens.length; i += 2) {
+        const operator = tokens[i];
+        const num = parseFloat(tokens[i + 1]);
+        if (operator === '+') result += num;
+        else if (operator === '-') result -= num;
+        else if (operator === '*') result *= num;
+        else if (operator === '/') result /= num;
+        else if (operator === '%') result %= num;
+    }
+    return result;
 }
 
-// --- OOP Paradigm Logic ---
+// --- Part B: Object-Oriented Paradigm ---
 class SmartCalculator {
-    constructor(expression) {
-        this.expression = expression;
+    constructor() {
+        this.result = 0;
     }
 
-    execute() {
-        return eval(this.expression);
-    }
-}
+    calculate(expr) {
+        const tokens = expr.split(/([+\-*/%])/).map(t => t.trim());
+        this.result = parseFloat(tokens[0]);
 
-// --- Functional Logic Paradigm ---
-function evaluateFunctional(expr) {
-    const compute = (expression) => eval(expression);
-    return compute(expr);
-}
-
-// --- MAIN HANDLER ---
-function handleAction() {
-    const input = document.getElementById('expressionInput');
-    const expression = input.value;
-    const mode = document.getElementById('paradigmChoice').value;
-    const display = document.getElementById('resultDisplay');
-
-    if (!expression) {
-        display.innerText = "Result: Enter expression!";
-        return;
-    }
-
-    try {
-        let result;
-
-        if (mode === 'procedural') {
-            result = evaluateProcedural(expression);
-        } else if (mode === 'oop') {
-            result = new SmartCalculator(expression).execute();
-        } else if (mode === 'functional') {
-            result = evaluateFunctional(expression);
-        } else {
-            result = eval(expression);
+        for (let i = 1; i < tokens.length; i += 2) {
+            const operator = tokens[i];
+            const num = parseFloat(tokens[i + 1]);
+            switch (operator) {
+                case '+': this.result += num; break;
+                case '-': this.result -= num; break;
+                case '*': this.result *= num; break;
+                case '/': this.result /= num; break;
+                case '%': this.result %= num; break;
+            }
         }
-
-        display.innerText = `Result: ${result}`;
-        addToHistory(expression, result);
-
-        // SAVE RESULT
-        lastResult = result;
-        justCalculated = true;
-
-        // CLEAR INPUT
-        input.value = '';
-
-    } catch (err) {
-        display.innerText = "Result: Error";
+        return this.result;
     }
 }
 
-// --- Append Button Click / Keyboard Input ---
+// --- Part C: Functional Paradigm ---
+function evaluateFunctional(expr) {
+    const tokens = expr.split(/([+\-*/%])/).map(t => t.trim());
+    return tokens.slice(1).reduce((acc, val, idx) => {
+        if (idx % 2 === 0) return acc;
+        const operator = tokens[idx];
+        const num = parseFloat(tokens[idx + 1]);
+        switch (operator) {
+            case '+': return acc + num;
+            case '-': return acc - num;
+            case '*': return acc * num;
+            case '/': return acc / num;
+            case '%': return acc % num;
+        }
+    }, parseFloat(tokens[0]));
+}
+
+// --- Part D: Event-Driven Logic ---
+// --- NOTE: Part D is from this section up to Clear / Delete / Copy part ---
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    const allowedOperators = ['+', '-', '*', '/', '%'];
+
+    if (!isNaN(key) || key === '.' || key === '%') appendValue(key);
+    else if (allowedOperators.includes(key)) appendValue(key);
+    else if (key === 'Enter') handleAction();
+    else if (key === 'Backspace') deleteLast();
+    else if (key === 'Escape') clearCalculator();
+
+    if (!isNaN(key) || allowedOperators.includes(key) || ['Enter', 'Backspace', 'Escape'].includes(key)) {
+        event.preventDefault();
+    }
+}); 
+
+// --- Button / Keyboard Input ---
 function appendValue(value) {
     const input = document.getElementById('expressionInput');
 
-    // Continue calculation if operator pressed after result
-    if (justCalculated && input.value === '' && ['+', '-', '*', '/'].includes(value)) {
+    if (justCalculated && input.value === '' && ['+', '-', '*', '/', '%'].includes(value)) {
         input.value = lastResult + value;
         justCalculated = false;
         return;
     }
 
-    // Start fresh if typing number after result
     if (justCalculated && /[0-9.]/.test(value)) {
         input.value = value;
         justCalculated = false;
@@ -114,41 +126,51 @@ function copyResult() {
     const res = display.innerText.replace('Result: ', '');
 
     if (res !== '--' && res !== 'Error') {
-        input.value += res; // append last result
+        input.value += res;
         lastResult = res;
         justCalculated = false;
-
-        // Copy to clipboard
         navigator.clipboard.writeText(res);
     }
 }
+// --- END OF PART D ---
 
-// --- Restrict Keyboard Input in Field ---
+// --- MAIN HANDLER (called on '=' or Enter) ---
+function handleAction() {
+    const input = document.getElementById('expressionInput');
+    const expression = input.value;
+    const mode = document.getElementById('paradigmChoice').value;
+    const display = document.getElementById('resultDisplay');
+
+    if (!expression) {
+        display.innerText = "Result: Enter expression!";
+        return;
+    }
+
+    try {
+        let result;
+
+        if (mode === 'procedural') {
+            result = evaluateProcedural(expression);
+        } else if (mode === 'oop') {
+            const calc = new SmartCalculator();
+            result = calc.calculate(expression);
+        } else if (mode === 'functional') {
+            result = evaluateFunctional(expression);
+        }
+
+        display.innerText = `Result: ${result}`;
+        addToHistory(expression, result);
+
+        lastResult = result;
+        justCalculated = true;
+        input.value = '';
+    } catch (err) {
+        display.innerText = "Result: Error";
+    }
+}
+
+// --- Restrict Keyboard Input ---
 const inputField = document.getElementById('expressionInput');
 inputField.addEventListener('input', function () {
     this.value = this.value.replace(/[^0-9+\-*/.%]/g, '');
-});
-
-// --- Keyboard Support for Calculator ---
-// --- Event-Driven Paradigm Logic ---
-document.addEventListener('keydown', (event) => {
-    const key = event.key;
-    const allowedOperators = ['+', '-', '*', '/', '%']; // add '%' here
-
-    if (!isNaN(key) || key === '.' || key === '%') {
-        appendValue(key);
-    } else if (allowedOperators.includes(key)) {
-        appendValue(key);
-    } else if (key === 'Enter') {
-        handleAction();
-    } else if (key === 'Backspace') {
-        deleteLast();
-    } else if (key === 'Escape') {
-        clearCalculator();
-    }
-
-    // Prevent default for handled keys
-    if (!isNaN(key) || allowedOperators.includes(key) || ['Enter', 'Backspace', 'Escape'].includes(key)) {
-        event.preventDefault();
-    }
 });
